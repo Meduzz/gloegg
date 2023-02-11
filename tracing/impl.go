@@ -79,6 +79,7 @@ func (t *tracingImpl) Name() string {
 func (t *tracingImpl) stopper(err error) {
 	t.EndTS = time.Now().UnixMilli()
 
+	// TODO flytta in detta i error handlern (ifen nedan)?
 	arr := make([]*types.Stack, 0)
 
 	it := stack.Trace().TrimRuntime()[1:]
