@@ -1,96 +1,37 @@
 package gloegg
 
 import (
-	"context"
-
-	"github.com/Meduzz/gloegg/log"
-	"github.com/Meduzz/gloegg/toggles"
-	"github.com/Meduzz/gloegg/types"
-	"github.com/rs/zerolog"
+	"github.com/Meduzz/gloegg/common"
+	"github.com/Meduzz/gloegg/logging"
+	"github.com/Meduzz/helper/fp/slice"
 )
 
 var (
-	loggers      map[string]zerolog.Logger
-	traceHandler func(types.Trace)
+	systemMetadata   = make([]*common.Tag, 0)
+	ingestionChannel = make(chan *common.Event)
+	doneChannel      = make(chan int, 1)
 )
 
-// Logger will load the named logger or create it.
-func Logger(name string) types.Logging {
-	if loggers == nil {
-		loggers = make(map[string]zerolog.Logger)
+// CreateLogger will create a logger with the provided name
+func CreateLogger(name string) common.Logger {
+	if name == "" {
+		return nil
 	}
 
-	l, exists := loggers[name]
-
-	if !exists {
-		l = logger.With().Str("logger", name).Logger()
-		loggers[name] = l
-
-		t := toggles.GetToggle(name)
-
-		if t != nil {
-			level := t.GetString("info")
-			real, err := zerolog.ParseLevel(level)
-
-			if err == nil {
-				l.Level(real)
-			}
-		}
-	}
-
-	return log.New(l, traceHandler)
+	return logging.NewLogger(name, ingestionChannel, systemMetadata)
 }
 
-// LoggerFromContext will load the named logger or create it. The context are for tracing only.
-func LoggerFromContext(name string, ctx context.Context) types.Logging {
-	if loggers == nil {
-		loggers = make(map[string]zerolog.Logger)
-	}
+// AddMeta add a piece of metadata, removing previous instances of this key
+func AddMeta(key string, value any) {
+	systemMetadata = slice.Filter(systemMetadata, func(tag *common.Tag) bool {
+		return tag.Key != key
+	})
 
-	l, exists := loggers[name]
-
-	if !exists {
-		l = logger.With().Str("logger", name).Logger()
-		loggers[name] = l
-
-		t := toggles.GetToggle(name)
-
-		if t != nil {
-			level := t.GetString(l.GetLevel().String())
-			real, err := zerolog.ParseLevel(level)
-
-			if err == nil {
-				l.Level(real)
-			}
-		}
-	}
-
-	return log.From(ctx, l, traceHandler)
+	systemMetadata = append(systemMetadata, common.Pair(key, value))
 }
 
-// LoggingToggleListener hook to keep logger levels updated with their toggles
-func LoggingToggleListener(t types.Toggle) {
-	l, ok := loggers[t.Name()]
-
-	if ok {
-		level := t.GetString(l.GetLevel().String())
-		real, err := zerolog.ParseLevel(level)
-
-		if err == nil {
-			l.Level(real)
-		}
-	}
-}
-
-// SetupLogging allows you to setup the root logger
-// any logger created via Logger() or LoggerFromContext()
-// will inherit from the root logger.
-func SetupLogging(setup func() zerolog.Logger) {
-	logger = setup()
-}
-
-// SetTraceHandler allows you to set a func to handle
-// traces from your app.
-func SetTraceHandler(handler func(types.Trace)) {
-	traceHandler = handler
+// Drain logs and traces then close down gloegg
+func Drain() {
+	close(ingestionChannel)
+	<-doneChannel
 }
