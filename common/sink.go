@@ -15,8 +15,8 @@ type (
 	LogDTO struct {
 		Level      string   `json:"level"`
 		Message    string   `json:"message"`
-		Error      error    `json:"error"` // error from error logs and traces
-		StackTrace []*Stack `json:"stack"` // Stack trace from error log
+		Error      error    `json:"error,omitempty"` // error from error logs and traces
+		StackTrace []*Stack `json:"stack,omitempty"` // Stack trace from error log
 	}
 
 	TraceDTO struct {
