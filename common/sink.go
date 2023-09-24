@@ -8,8 +8,8 @@ type (
 		Logger   string    `json:"logger"`   // logger
 		Metadata []*Tag    `json:"metadata"` // metadata
 		Created  time.Time `json:"created"`
-		Log      *LogDTO   `json:"log"`
-		Trace    *TraceDTO `json:"trace"`
+		Log      *LogDTO   `json:"log,omitempty"`
+		Trace    *TraceDTO `json:"trace,omitempty"`
 	}
 
 	LogDTO struct {
