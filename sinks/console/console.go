@@ -45,8 +45,12 @@ func (c *consoleSink) Handle(event *common.Event) {
 				fmt.Fprintf(buf, "%s [%s] %s - %s metadata{%v}\n", created, logger, level, event.Log.Message, common.AsMap(event.Metadata...))
 
 				if event.Log.Error != nil {
+					// <error message>
+					fmt.Fprintf(buf, "Error message: %s\n", event.Log.Error.Error())
+
 					// func - file:line
 					slice.ForEach(event.Log.StackTrace, func(item *common.Stack) {
+						// TODO filter external toggle, that prefix check the item.Func to get rid of noise?
 						fmt.Fprintf(buf, "\t%s - %s:%d\n", item.Func, item.File, item.Line)
 					})
 				}
