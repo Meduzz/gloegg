@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Meduzz/gloegg/common"
@@ -42,7 +43,7 @@ func (c *consoleSink) Handle(event *common.Event) {
 				level := event.Log.Level
 
 				buf := bytes.NewBufferString("")
-				fmt.Fprintf(buf, "%s [%s] %s - %s metadata{%v}\n", created, logger, level, event.Log.Message, common.AsMap(event.Metadata...))
+				fmt.Fprintf(buf, "%s [%s] %s - %s [%s]\n", created, logger, level, event.Log.Message, dumpMetadata(event.Metadata))
 
 				if event.Log.Error != nil {
 					// <error message>
@@ -61,8 +62,16 @@ func (c *consoleSink) Handle(event *common.Event) {
 				start := event.Trace.Start
 				end := event.Trace.End
 
-				fmt.Printf("%s [%s] - %s (%s) metadata{%v}\n", created, logger, event.Trace.Name, end.Sub(start).String(), common.AsMap(event.Metadata...))
+				fmt.Printf("%s [%s] - %s (%s) [%s]\n", created, logger, event.Trace.Name, end.Sub(start).String(), dumpMetadata(event.Metadata))
 			}
 		}
 	}
+}
+
+func dumpMetadata(tags []*common.Tag) string {
+	converted := slice.Map(tags, func(tag *common.Tag) string {
+		return fmt.Sprintf("%s=%v", tag.Key, tag.Value)
+	})
+
+	return strings.Join(converted, ", ")
 }
