@@ -47,7 +47,8 @@ func (c *consoleSink) Handle(event *common.Event) {
 
 				if event.Log.Error != nil {
 					// <error message>
-					fmt.Fprintf(buf, "Error message: %s\n", event.Log.Error.Error())
+					fmt.Fprintf(buf, "Error:\n\t%s\n", event.Log.Error.Error())
+					fmt.Fprintln(buf, "Stacktrace:")
 
 					// func - file:line
 					slice.ForEach(event.Log.StackTrace, func(item *common.Stack) {
