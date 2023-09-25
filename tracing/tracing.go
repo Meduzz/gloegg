@@ -122,7 +122,7 @@ func (t *tracingImpl) Done(err error) {
 	})
 
 	if err != nil {
-		trace.Error = err
+		trace.Error = err.Error()
 		trace.StackTrace = callstack
 	}
 

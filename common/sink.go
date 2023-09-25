@@ -15,7 +15,7 @@ type (
 	LogDTO struct {
 		Level      string   `json:"level"`
 		Message    string   `json:"message"`
-		Error      error    `json:"error,omitempty"` // error from error logs and traces
+		Error      string   `json:"error,omitempty"` // error from error logs and traces
 		StackTrace []*Stack `json:"stack,omitempty"` // Stack trace from error log
 	}
 
@@ -24,7 +24,7 @@ type (
 		ID         string    `json:"id"`
 		Start      time.Time `json:"start"`
 		End        time.Time `json:"end"`
-		Error      error     `json:"error,omitempty"` // error from error logs and traces
+		Error      string    `json:"error,omitempty"` // error from error logs and traces
 		StackTrace []*Stack  `json:"stack,omitempty"` // Stack trace from error log
 	}
 

@@ -59,7 +59,7 @@ func (l *loggingFacade) log(level, msg string, tags []*common.Tag, err error) {
 	event.Logger = l.name
 
 	if err != nil {
-		log.Error = err
+		log.Error = err.Error()
 		log.StackTrace = stackMarshaler(err)
 	}
 

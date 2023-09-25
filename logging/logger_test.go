@@ -49,7 +49,7 @@ func assertLog(t *testing.T, channel chan *common.Event, msg, level string, meta
 	}
 
 	if err != nil {
-		if event.Log.Error == nil {
+		if event.Log.Error == "" {
 			t.Error("expected an error")
 		}
 	}

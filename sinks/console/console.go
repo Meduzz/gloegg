@@ -45,9 +45,9 @@ func (c *consoleSink) Handle(event *common.Event) {
 				buf := bytes.NewBufferString("")
 				fmt.Fprintf(buf, "%s [%s] %s - %s [%s]\n", created, logger, level, event.Log.Message, dumpMetadata(event.Metadata))
 
-				if event.Log.Error != nil {
+				if event.Log.Error != "" {
 					// <error message>
-					fmt.Fprintf(buf, "Error:\n\t%s\n", event.Log.Error.Error())
+					fmt.Fprintf(buf, "Error:\n\t%s\n", event.Log.Error)
 					fmt.Fprintln(buf, "Stacktrace:")
 
 					// func - file:line
