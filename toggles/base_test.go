@@ -240,3 +240,21 @@ func TestUpdateValue(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestSetToggle(t *testing.T) {
+	toggle, err := SetToggle("string", KindString, "test")
+
+	if err != nil {
+		t.Errorf("creating toggle threw error: %v", err)
+	}
+
+	stringToggle, ok := toggle.(StringToggle)
+
+	if !ok {
+		t.Error("toggle was not of string kind")
+	}
+
+	if !stringToggle.Equals("test") {
+		t.Errorf("toggle value was not 'test' but '%s'", stringToggle.Value())
+	}
+}
