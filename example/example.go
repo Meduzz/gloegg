@@ -8,6 +8,7 @@ import (
 
 	"github.com/Meduzz/gloegg"
 	"github.com/Meduzz/gloegg/common"
+	"github.com/Meduzz/gloegg/logging"
 	"github.com/Meduzz/gloegg/toggles"
 	"github.com/Meduzz/gloegg/tracing"
 )
@@ -77,7 +78,7 @@ func main() {
 	gloegg.AddMeta("service", "GreetingService")
 
 	// Setup logger toggle
-	settings := toggles.SetObjectToggle("logger.GreetingLogic", make(map[string]any))
+	settings := toggles.SetObjectToggle(logging.Name("GreetingLogic"), make(map[string]any))
 	// enable debug for this logger
 	settings.SetField("level", "debug") // default info
 	// track all traces

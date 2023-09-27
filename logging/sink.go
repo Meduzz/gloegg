@@ -14,7 +14,8 @@ var (
 
 func StartSink(channel chan *common.Event, doneChan chan int) {
 	for event := range channel {
-		settings := toggles.GetObjectToggle(fmt.Sprintf("logger.%s", event.Logger))
+		settings := toggles.GetObjectToggle(Name(event.Logger))
+
 		switch event.Kind {
 		case "LOG":
 			handleLog(event, settings)
@@ -28,6 +29,10 @@ func StartSink(channel chan *common.Event, doneChan chan int) {
 
 func AddSink(sink common.Sink) {
 	sinks = append(sinks, sink)
+}
+
+func Name(name string) string {
+	return fmt.Sprintf("logger.%s", name)
 }
 
 func handleLog(event *common.Event, settings toggles.ObjectToggle) {

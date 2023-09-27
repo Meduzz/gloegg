@@ -146,9 +146,13 @@ func GetStringToggle(name string, selectors ...*common.Tag) StringToggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newStringToggle(name, "", selectors)
 
-	return newStringToggle(name, "", selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetIntToggle(name string, selectors ...*common.Tag) IntToggle {
@@ -164,9 +168,13 @@ func GetIntToggle(name string, selectors ...*common.Tag) IntToggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newIntToggle(name, 0, selectors)
 
-	return newIntToggle(name, 0, selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetInt64Toggle(name string, selectors ...*common.Tag) Int64Toggle {
@@ -182,9 +190,13 @@ func GetInt64Toggle(name string, selectors ...*common.Tag) Int64Toggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newInt64Toggle(name, 0, selectors)
 
-	return newInt64Toggle(name, 0, selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetFloat64Toggle(name string, selectors ...*common.Tag) Float64Toggle {
@@ -200,9 +212,13 @@ func GetFloat64Toggle(name string, selectors ...*common.Tag) Float64Toggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newFloat64Toggle(name, 0, selectors)
 
-	return newFloat64Toggle(name, 0, selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetFloat32Toggle(name string, selectors ...*common.Tag) Float32Toggle {
@@ -218,9 +234,13 @@ func GetFloat32Toggle(name string, selectors ...*common.Tag) Float32Toggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newFloat32Toggle(name, 0, selectors)
 
-	return newFloat32Toggle(name, 0, selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetBoolToggle(name string, selectors ...*common.Tag) BoolToggle {
@@ -236,9 +256,13 @@ func GetBoolToggle(name string, selectors ...*common.Tag) BoolToggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newBoolToggle(name, false, selectors)
 
-	return newBoolToggle(name, false, selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }
 
 func GetObjectToggle(name string, selectors ...*common.Tag) ObjectToggle {
@@ -254,7 +278,11 @@ func GetObjectToggle(name string, selectors ...*common.Tag) ObjectToggle {
 		}
 
 		return t
-	}
+	} else {
+		t := newObjectToggle(name, make(map[string]any), selectors)
 
-	return newObjectToggle(name, make(map[string]any), selectors)
+		typedToggles = append(typedToggles, t)
+
+		return t
+	}
 }

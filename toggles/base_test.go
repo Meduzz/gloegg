@@ -257,4 +257,10 @@ func TestSetToggle(t *testing.T) {
 	if !stringToggle.Equals("test") {
 		t.Errorf("toggle value was not 'test' but '%s'", stringToggle.Value())
 	}
+
+	stringToggle = GetStringToggle("string")
+
+	if stringToggle.DefaultValue("ERROR") != "test" {
+		t.Errorf("string toggle value was not 'test' but '%s'", stringToggle.Value())
+	}
 }
