@@ -143,12 +143,12 @@ func GetStringToggle(name string, selectors ...*common.Tag) StringToggle {
 
 		if !ok {
 			t = newStringToggle(name, "", selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newStringToggle(name, "", selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -165,12 +165,12 @@ func GetIntToggle(name string, selectors ...*common.Tag) IntToggle {
 
 		if !ok {
 			t = newIntToggle(name, 0, selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newIntToggle(name, 0, selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -187,12 +187,12 @@ func GetInt64Toggle(name string, selectors ...*common.Tag) Int64Toggle {
 
 		if !ok {
 			t = newInt64Toggle(name, 0, selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newInt64Toggle(name, 0, selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -209,12 +209,12 @@ func GetFloat64Toggle(name string, selectors ...*common.Tag) Float64Toggle {
 
 		if !ok {
 			t = newFloat64Toggle(name, 0, selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newFloat64Toggle(name, 0, selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -231,12 +231,12 @@ func GetFloat32Toggle(name string, selectors ...*common.Tag) Float32Toggle {
 
 		if !ok {
 			t = newFloat32Toggle(name, 0, selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newFloat32Toggle(name, 0, selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -253,12 +253,12 @@ func GetBoolToggle(name string, selectors ...*common.Tag) BoolToggle {
 
 		if !ok {
 			t = newBoolToggle(name, false, selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newBoolToggle(name, false, selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t
@@ -275,12 +275,12 @@ func GetObjectToggle(name string, selectors ...*common.Tag) ObjectToggle {
 
 		if !ok {
 			t = newObjectToggle(name, make(map[string]any), selectors)
+			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
 		t := newObjectToggle(name, make(map[string]any), selectors)
-
 		typedToggles = append(typedToggles, t)
 
 		return t

@@ -21,6 +21,8 @@ func StartSink(channel chan *common.Event, doneChan chan int) {
 			handleLog(event, settings)
 		case "TRACE":
 			handleTrace(event, settings)
+		default:
+			fmt.Printf("unknown kind: %s, dropping\n", event.Kind)
 		}
 	}
 

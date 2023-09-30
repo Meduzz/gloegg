@@ -241,7 +241,7 @@ func TestUpdateValue(t *testing.T) {
 	}
 }
 
-func TestSetToggle(t *testing.T) {
+func TestSetStringToggle(t *testing.T) {
 	toggle, err := SetToggle("string", KindString, "test")
 
 	if err != nil {
@@ -262,5 +262,77 @@ func TestSetToggle(t *testing.T) {
 
 	if stringToggle.DefaultValue("ERROR") != "test" {
 		t.Errorf("string toggle value was not 'test' but '%s'", stringToggle.Value())
+	}
+
+	toggle, err = SetToggle("string", KindString, "real")
+
+	if err != nil {
+		t.Errorf("creating toggle threw error: %v", err)
+	}
+
+	stringToggle, ok = toggle.(StringToggle)
+
+	if !ok {
+		t.Error("toggle was not of string kind")
+	}
+
+	if !stringToggle.Equals("real") {
+		t.Errorf("toggle value was not 'real' but '%s'", stringToggle.Value())
+	}
+
+	stringToggle = GetStringToggle("string")
+
+	if stringToggle.DefaultValue("ERROR") != "real" {
+		t.Errorf("string toggle value was not 'real' but '%s'", stringToggle.Value())
+	}
+}
+
+func TestSetObjectToggle(t *testing.T) {
+	data := make(map[string]interface{})
+	data["value"] = "test"
+
+	toggle, err := SetToggle("string", KindObject, data)
+
+	if err != nil {
+		t.Errorf("creating toggle threw error: %v", err)
+	}
+
+	objectToggle, ok := toggle.(ObjectToggle)
+
+	if !ok {
+		t.Error("toggle was not of string kind")
+	}
+
+	if objectToggle.DefaultString("value", "ERROR") != "test" {
+		t.Errorf("toggle value was not 'test' but '%s'", objectToggle.Value())
+	}
+
+	objectToggle = GetObjectToggle("string")
+
+	if objectToggle.DefaultString("value", "ERROR") != "test" {
+		t.Errorf("string toggle value was not 'test' but '%s'", objectToggle.Value())
+	}
+
+	data["value"] = "real"
+	toggle, err = SetToggle("string", KindObject, data)
+
+	if err != nil {
+		t.Errorf("creating toggle threw error: %v", err)
+	}
+
+	objectToggle, ok = toggle.(ObjectToggle)
+
+	if !ok {
+		t.Error("toggle was not of string kind")
+	}
+
+	if objectToggle.DefaultString("value", "ERROR") != "real" {
+		t.Errorf("toggle value was not 'real' but '%s'", objectToggle.Value())
+	}
+
+	objectToggle = GetObjectToggle("string")
+
+	if objectToggle.DefaultString("value", "ERROR") != "real" {
+		t.Errorf("string toggle value was not 'real' but '%s'", objectToggle.Value())
 	}
 }
