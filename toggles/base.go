@@ -21,6 +21,8 @@ const (
 	KindObject  = "object"
 )
 
+// TODO add way to remove a toggle
+
 func SetStringToggle(name, value string, selectors ...*common.Tag) StringToggle {
 	toggle := GetStringToggle(name, selectors...)
 	toggle.Set(value)
@@ -285,4 +287,29 @@ func GetObjectToggle(name string, selectors ...*common.Tag) ObjectToggle {
 
 		return t
 	}
+}
+
+func RemoveToggle(name, kind string, selectors ...*common.Tag) {
+	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
+		return toggle.Type() == kind && toggle.Name() == name && toggle.Matches(selectors...)
+	})
+
+	pool := typedToggles
+	keepers := make([]Toggle, 0)
+
+	slice.ForEach(matches, func(it Toggle) {
+		for _, t := range pool {
+			if t.Name() == it.Name() {
+				if t.Type() == it.Type() {
+					continue
+				}
+			}
+
+			keepers = append(keepers, t)
+		}
+
+		pool = keepers
+	})
+
+	typedToggles = pool
 }

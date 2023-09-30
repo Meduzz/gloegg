@@ -336,3 +336,21 @@ func TestSetObjectToggle(t *testing.T) {
 		t.Errorf("string toggle value was not 'real' but '%s'", objectToggle.Value())
 	}
 }
+
+func TestRemoveToggle(t *testing.T) {
+	SetStringToggle("value", "good")
+
+	subject := GetStringToggle("value")
+
+	if subject.Value() != "good" {
+		t.Errorf("toggle value was not 'good' but '%s'", subject.Value())
+	}
+
+	RemoveToggle("value", KindString)
+
+	subject = GetStringToggle("value")
+
+	if subject.DefaultValue("removed") != "removed" {
+		t.Errorf("toggle value was not 'removed' but '%s'", subject.Value())
+	}
+}
