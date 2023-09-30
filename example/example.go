@@ -9,6 +9,7 @@ import (
 	"github.com/Meduzz/gloegg"
 	"github.com/Meduzz/gloegg/common"
 	"github.com/Meduzz/gloegg/logging"
+	"github.com/Meduzz/gloegg/sinks/console"
 	"github.com/Meduzz/gloegg/toggles"
 	"github.com/Meduzz/gloegg/tracing"
 )
@@ -51,6 +52,8 @@ func (g *GreetingService) Greet(ctx context.Context, name string) (string, error
 		return fmt.Sprintf("Hello %s!", strings.ToLower(name)), nil
 		// compare len of name to feature toggle for max name length, that defaults to 20
 	} else if len(name) > toggle.DefaultValue(20) {
+		toggles.SetBoolToggle(console.ConsolePrintTraceEnabled, true) // print traces
+
 		// good for when need to debug this complicated logic
 		g.logger.Debug("length was more than max allowed")
 
@@ -86,6 +89,7 @@ func main() {
 
 	// toggles.SetBoolToggle(console.ConsoleLogEnabled, false) // disable default console logger
 	// toggles.SetBoolToggle(console.ConsoleLogJson, true) // set console logger output to json
+	toggles.SetBoolToggle(console.ConsolePrintTraceEnabled, false) // dont print traces
 
 	fmt.Println("Enter your name:")
 	name := ""

@@ -17,8 +17,10 @@ type (
 )
 
 const (
-	ConsoleLogJson    = "gloegg.log.json"
-	ConsoleLogEnabled = "gloegg.log.enabled"
+	ConsoleLogJson           = "gloegg.log.json"
+	ConsoleLogEnabled        = "gloegg.log.enabled"
+	ConsolePrintLogEnabled   = "gloegg.print.log.enabled"
+	ConsolePrintTraceEnabled = "gloegg.print.trace.enabled"
 )
 
 func NewConsoleWriter() common.Sink {
@@ -35,10 +37,13 @@ func (c *consoleSink) Handle(event *common.Event) {
 
 			fmt.Println(string(bs))
 		} else {
+			showLogs := toggles.GetBoolToggle(ConsolePrintLogEnabled)
+			showTraces := toggles.GetBoolToggle(ConsolePrintTraceEnabled)
+
 			created := event.Created.Format(time.DateTime)
 			logger := event.Logger
 
-			if event.Kind == "LOG" {
+			if event.Kind == "LOG" && showLogs.Value() {
 				// ts [logger] level - message (metadata)
 				level := event.Log.Level
 
@@ -58,7 +63,7 @@ func (c *consoleSink) Handle(event *common.Event) {
 				}
 
 				fmt.Print(buf.String())
-			} else if event.Kind == "TRACE" {
+			} else if event.Kind == "TRACE" && showTraces.Value() {
 				// ts [logger] - message (duration?) (metadata)
 				start := event.Trace.Start
 				end := event.Trace.End
