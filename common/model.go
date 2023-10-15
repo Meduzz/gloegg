@@ -26,10 +26,29 @@ type (
 	}
 
 	Trace interface {
+		// Fetch the id of this trace
 		ID() string
+
+		// Fetch the context of this trace
 		Context() context.Context
+
+		// Complete this trace with an optional error
 		Done(error)
+
+		// Add additional metadata to this trace
 		AddMetadata(...*Tag)
+
+		// Info - log a msg at info level, providing additional context via tags
+		Info(msg string, tags ...*Tag)
+
+		// Debug - log a msg at debug level, providing additional context via tags
+		Debug(msg string, tags ...*Tag)
+
+		// Warn - log a msg at warn level, providing additional context via tags
+		Warn(msg string, tags ...*Tag)
+
+		// Error - log a msg at error level, providing additional context via tags
+		Error(msg string, err error, tags ...*Tag)
 	}
 
 	Tag struct {
@@ -42,4 +61,11 @@ type (
 		Line int    `json:"line"`
 		Func string `json:"function"`
 	}
+)
+
+const (
+	LevelDebug = "debug"
+	LevelInfo  = "info"
+	LevelWarn  = "warn"
+	LevelError = "error"
 )

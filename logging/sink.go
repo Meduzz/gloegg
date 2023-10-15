@@ -49,6 +49,11 @@ func handleLog(event *common.Event, settings toggles.ObjectToggle) {
 
 func handleTrace(event *common.Event, settings toggles.ObjectToggle) {
 	enabled := settings.DefaultBool("tracing", false)
+	logLevel := settings.DefaultString("level", "info")
+
+	event.Trace.Checkpoints = slice.Filter(event.Trace.Checkpoints, func(log *common.CheckpointDTO) bool {
+		return shouldLog(logLevel, log.Level)
+	})
 
 	if enabled {
 		slice.ForEach(sinks, func(sink common.Sink) {
@@ -61,14 +66,14 @@ func shouldLog(system, event string) bool {
 	allowed := make([]string, 0)
 
 	switch system {
-	case "error":
-		allowed = append(allowed, "error")
-	case "warn":
-		allowed = append(allowed, "warn", "error")
-	case "info":
-		allowed = append(allowed, "info", "warn", "error")
-	case "debug":
-		allowed = append(allowed, "debug", "info", "error", "warn")
+	case common.LevelError:
+		allowed = append(allowed, common.LevelError)
+	case common.LevelWarn:
+		allowed = append(allowed, common.LevelWarn, common.LevelError)
+	case common.LevelInfo:
+		allowed = append(allowed, common.LevelInfo, common.LevelWarn, common.LevelError)
+	case common.LevelDebug:
+		allowed = append(allowed, common.LevelDebug, common.LevelInfo, common.LevelError, common.LevelWarn)
 	default:
 	}
 

@@ -24,19 +24,19 @@ func NewLogger(name string, channel chan *common.Event, systemMeta []*common.Tag
 }
 
 func (l *loggingFacade) Info(msg string, tags ...*common.Tag) {
-	l.log("info", msg, tags, nil)
+	l.log(common.LevelInfo, msg, tags, nil)
 }
 
 func (l *loggingFacade) Debug(msg string, tags ...*common.Tag) {
-	l.log("debug", msg, tags, nil)
+	l.log(common.LevelDebug, msg, tags, nil)
 }
 
 func (l *loggingFacade) Warn(msg string, tags ...*common.Tag) {
-	l.log("warn", msg, tags, nil)
+	l.log(common.LevelWarn, msg, tags, nil)
 }
 
 func (l *loggingFacade) Error(msg string, err error, tags ...*common.Tag) {
-	l.log("error", msg, tags, err)
+	l.log(common.LevelError, msg, tags, err)
 }
 
 func (l *loggingFacade) Trace(name string, tags ...*common.Tag) common.Trace {

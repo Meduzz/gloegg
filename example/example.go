@@ -42,6 +42,8 @@ func (g *GreetingService) Greet(ctx context.Context, name string) (string, error
 	// load a feature toggle for the max length of the name parameter
 	toggle := toggles.GetIntToggle("name:max.size")
 
+	// traces does logging too, called checkpoints
+	trace.Info("about to execute name logic", common.Pair("length", len(name)))
 	if len(name) < 10 {
 		// close the trace, the nil means no error
 		defer trace.Done(nil)
@@ -55,11 +57,11 @@ func (g *GreetingService) Greet(ctx context.Context, name string) (string, error
 		toggles.SetBoolToggle(console.ConsolePrintTraceEnabled, true) // print traces
 
 		// good for when need to debug this complicated logic
-		g.logger.Debug("length was more than max allowed")
+		trace.Debug("length was more than max allowed")
 
 		err := fmt.Errorf("sorry, your name is too long")
 		// turns out there was an error here, we better log that
-		g.logger.Error("length of name was too long", err, common.Pair("actual", len(name)), common.Pair("max", toggle.DefaultValue(20)))
+		trace.Error("length of name was too long", err, common.Pair("actual", len(name)), common.Pair("max", toggle.DefaultValue(20)))
 
 		// close the trace, this time with an error
 		trace.Done(err)

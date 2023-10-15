@@ -22,14 +22,22 @@ Eventually, if all conditions are met, your log or trace event ends up in a sink
 
 You can create and add your own sinks.
 
+### ConsoleSink
+"Bundled" with the lib comes a sink that will write your logs and traces to stdout. It relies heavily on feature toggles though. It can be fully disabled by setting boolean toogle `gloegg.log.enabled`. It can be instructed to generate json logging via boolean toggle `gloegg.log.json`. Printing of logs and traces individually can be controlled with boolean toggles `gloegg.print.log.enabled` (logs (& checkpoints)) & `gloegg.print.trace.enabled` (traces).
+
+While default values of boolean toggles are `false`, logs and traces (with checkpoints) will be enabled explicitly by the lib (but can be disabled via the above flags).
+
 ## Logging
 This part does structured logging, pretty much as expected. The thought is to keep the log line static and add metadata in tags until it makes sense. That metadata could also be metrics, coincidently the next topic.
 
 ## Metrics
-This part is sort of hidden. Add it to the logs, and use the logs as the name of the metric. Push the complexity with metric type (histogram, gauge, etc) to a server/the cloud.
+This part is sort of hidden. Add it to the logs, and use the logs as the name of the metric. Push the complexity with metric type (histogram, gauge, etc) to a server/the cloud. Treat your service telemetry like some stupid IoT sensor data.
 
 ## Traces
 This part is pretty much a "batteries excluded" solution ;) There's infrastructure to generate simple traces, and a way to collect them. But they will not integrate with any standard systems as of now.
+
+### Checkpoints
+Traces can also take logs, but it will as a bonus keep track on when they were generated. So a duration can be calculated against the events created timestamp. Checkpoints looks and feels like logs (they even follow the same rules (mostly)), but are called checkpoints.
 
 ## Feature toggles
 These got in here while I had the steam up. I wanted a way to control my loggers, which is traditionally done through configs. Which in my mind is narrow minded. Again, it's a bit of a batteries excluded situation. However there should be enough infrastructure to make things spinning, or what ever you'd like them to do.

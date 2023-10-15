@@ -64,11 +64,34 @@ func (c *consoleSink) Handle(event *common.Event) {
 
 				fmt.Print(buf.String())
 			} else if event.Kind == "TRACE" && showTraces.Value() {
-				// ts [logger] - message (duration?) (metadata)
+				// ts [logger] trace: message (duration?) (metadata)
 				start := event.Trace.Start
 				end := event.Trace.End
 
-				fmt.Printf("%s [%s] - %s (%s) [%s]\n", created, logger, event.Trace.Name, end.Sub(start).String(), dumpMetadata(event.Metadata))
+				fmt.Printf("%s [%s] trace: %s (%s) [%s]\n", created, logger, event.Trace.Name, end.Sub(start).String(), dumpMetadata(event.Metadata))
+
+				if showLogs.Value() {
+					slice.ForEach(event.Trace.Checkpoints, func(it *common.CheckpointDTO) {
+						// ts [logger] checkpoint - message (duration) metadata
+
+						buf := bytes.NewBufferString("")
+						fmt.Fprintf(buf, "%s [%s] checkpoint (%s) - %s (%s) [%s]\n", it.Created.Format(time.DateTime), logger, it.Level, it.Message, it.Created.Sub(event.Trace.Start), dumpMetadata(it.Metadata))
+
+						if it.Error != "" {
+							// <error message>
+							fmt.Fprintf(buf, "Error:\n\t%s\n", it.Error)
+							fmt.Fprintln(buf, "Stacktrace:")
+
+							// func - file:line
+							slice.ForEach(it.StackTrace, func(item *common.Stack) {
+								// TODO filter external toggle, that prefix check the item.Func to get rid of noise?
+								fmt.Fprintf(buf, "\t%s - %s:%d\n", item.Func, item.File, item.Line)
+							})
+						}
+
+						fmt.Print(buf.String())
+					})
+				}
 			}
 		}
 	}

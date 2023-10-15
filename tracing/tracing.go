@@ -22,6 +22,7 @@ type (
 		eventChannel chan *common.Event
 		done         bool
 		logger       string
+		checkpoints  []*common.CheckpointDTO
 	}
 
 	TracingError struct {
@@ -85,6 +86,7 @@ func NewFromContext(name string, ctx context.Context, channel chan *common.Event
 		start:        time.Now(),
 		eventChannel: channel,
 		done:         false,
+		checkpoints:  make([]*common.CheckpointDTO, 0),
 	}, nil
 }
 
@@ -102,6 +104,7 @@ func (t *tracingImpl) Done(err error) {
 	trace.Name = t.name
 	trace.Start = t.start
 	trace.ID = t.id
+	trace.Checkpoints = t.checkpoints
 
 	event := &common.Event{}
 	event.Created = time.Now()
@@ -138,4 +141,52 @@ func (t *tracingImpl) Context() context.Context {
 
 func (t *tracingImpl) AddMetadata(tags ...*common.Tag) {
 	t.tags = append(t.tags, tags...)
+}
+
+func (t *tracingImpl) Debug(msg string, tags ...*common.Tag) {
+	t.log(common.LevelDebug, msg, tags, nil)
+}
+
+func (t *tracingImpl) Error(msg string, err error, tags ...*common.Tag) {
+	t.log(common.LevelError, msg, tags, err)
+}
+
+func (t *tracingImpl) Info(msg string, tags ...*common.Tag) {
+	t.log(common.LevelInfo, msg, tags, nil)
+}
+
+func (t *tracingImpl) Warn(msg string, tags ...*common.Tag) {
+	t.log(common.LevelWarn, msg, tags, nil)
+}
+
+func (l *tracingImpl) log(level, msg string, tags []*common.Tag, err error) {
+	log := &common.CheckpointDTO{}
+	log.Message = msg
+	log.Level = level
+	log.Created = time.Now()
+	log.Metadata = append(l.tags, tags...)
+
+	if err != nil {
+		log.Error = err.Error()
+		log.StackTrace = stackMarshaler(err)
+	}
+
+	l.checkpoints = append(l.checkpoints, log)
+}
+
+func stackMarshaler(e error) []*common.Stack {
+	arr := make([]*common.Stack, 0)
+
+	it := stack.Trace().TrimRuntime()[3:]
+
+	for _, trace := range it {
+		frame := trace.Frame()
+		arr = append(arr, &common.Stack{
+			File: fmt.Sprintf("%+s", trace),
+			Line: frame.Line,
+			Func: frame.Function,
+		})
+	}
+
+	return arr
 }
