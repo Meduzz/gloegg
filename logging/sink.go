@@ -14,7 +14,7 @@ var (
 
 func StartSink(channel chan *common.Event, doneChan chan int) {
 	for event := range channel {
-		settings := toggles.GetObjectToggle(Name(event.Logger))
+		settings := toggles.GetObjectToggle(FlagForLogger(event.Logger))
 
 		switch event.Kind {
 		case "LOG":
@@ -33,7 +33,7 @@ func AddSink(sink common.Sink) {
 	sinks = append(sinks, sink)
 }
 
-func Name(name string) string {
+func FlagForLogger(name string) string {
 	return fmt.Sprintf("logger.%s", name)
 }
 
@@ -48,7 +48,7 @@ func handleLog(event *common.Event, settings toggles.ObjectToggle) {
 }
 
 func handleTrace(event *common.Event, settings toggles.ObjectToggle) {
-	enabled := settings.DefaultBool("tracing", false)
+	enabled := settings.DefaultBool("tracing", true)
 	logLevel := settings.DefaultString("level", "info")
 
 	event.Trace.Checkpoints = slice.Filter(event.Trace.Checkpoints, func(log *common.CheckpointDTO) bool {

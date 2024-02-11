@@ -83,7 +83,7 @@ func main() {
 	gloegg.AddMeta("service", "GreetingService")
 
 	// Setup logger toggle
-	settings := toggles.SetObjectToggle(logging.Name("GreetingLogic"), make(map[string]any))
+	settings := toggles.SetObjectToggle(logging.FlagForLogger("GreetingLogic"), make(map[string]any))
 	// enable debug for this logger
 	settings.SetField("level", "debug") // default info
 	// track all traces

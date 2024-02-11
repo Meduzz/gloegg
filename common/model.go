@@ -21,8 +21,14 @@ type (
 		// Trace - create a new named trace, providing additional context via tags
 		Trace(name string, tags ...*Tag) Trace
 
-		// Trace - create a new named trace, providing additional context via tags
+		// TraceContext - create a new named trace, providing additional context via tags
 		TraceContext(name string, parent context.Context, tags ...*Tag) (Trace, error)
+
+		// TraceParentID - create a new named trace from a parent trace id.
+		TraceFromParentID(parent, name string, tags ...*Tag) (Trace, error)
+
+		// TraceFromParent - create a new named trace from a parent trace.
+		TraceFromParent(name string, praent Trace, tags ...*Tag) (Trace, error)
 	}
 
 	Trace interface {

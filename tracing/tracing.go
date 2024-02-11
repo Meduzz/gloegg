@@ -90,6 +90,61 @@ func NewFromContext(name string, ctx context.Context, channel chan *common.Event
 	}, nil
 }
 
+func NewFromID(id, name string, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
+	traceId, err := tracingid.NewTracingIDFromParent(id, name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := context.Background()
+
+	id, err = tracingid.ToString(traceId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &tracingImpl{
+		id:           id,
+		logger:       logger,
+		name:         name,
+		ctx:          context.WithValue(ctx, &contextKey{GloeggTraceKey}, traceId),
+		tags:         tags,
+		start:        time.Now(),
+		eventChannel: channel,
+		done:         false,
+		checkpoints:  make([]*common.CheckpointDTO, 0),
+	}, nil
+}
+
+func NewFromParent(parent common.Trace, name string, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
+	ctx := context.Background()
+	traceId, err := tracingid.NewTracingIDFromParent(parent.ID(), name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := tracingid.ToString(traceId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &tracingImpl{
+		id:           id,
+		logger:       logger,
+		name:         name,
+		ctx:          context.WithValue(ctx, &contextKey{GloeggTraceKey}, traceId),
+		tags:         tags,
+		start:        time.Now(),
+		eventChannel: channel,
+		done:         false,
+		checkpoints:  make([]*common.CheckpointDTO, 0),
+	}, nil
+}
+
 func (t *tracingImpl) ID() string {
 	return t.id
 }

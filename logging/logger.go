@@ -47,6 +47,14 @@ func (l *loggingFacade) TraceContext(name string, parent context.Context, tags .
 	return tracing.NewFromContext(name, parent, l.eventChannel, l.name, append(l.metadata, tags...)...)
 }
 
+func (l *loggingFacade) TraceFromParentID(id, name string, tags ...*common.Tag) (common.Trace, error) {
+	return tracing.NewFromID(id, name, l.eventChannel, l.name, tags...)
+}
+
+func (l *loggingFacade) TraceFromParent(name string, parent common.Trace, tags ...*common.Tag) (common.Trace, error) {
+	return tracing.NewFromParent(parent, name, l.eventChannel, l.name, tags...)
+}
+
 func (l *loggingFacade) log(level, msg string, tags []*common.Tag, err error) {
 	log := &common.LogDTO{}
 	log.Message = msg
