@@ -5,14 +5,13 @@ import "github.com/Meduzz/gloegg/common"
 type (
 	int64Toggle struct {
 		name     string
-		typ      string
 		value    int64
 		metadata []*common.Tag
 	}
 )
 
 func newInt64Toggle(name string, value int64, metadata []*common.Tag) Int64Toggle {
-	return &int64Toggle{name, "int64", value, metadata}
+	return &int64Toggle{name, value, metadata}
 }
 
 func (i *int64Toggle) Matches(needle ...*common.Tag) bool {
@@ -24,7 +23,7 @@ func (i *int64Toggle) Name() string {
 }
 
 func (i *int64Toggle) Type() string {
-	return i.typ
+	return KindInt64
 }
 
 func (i *int64Toggle) Value() int64 {

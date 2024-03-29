@@ -30,6 +30,16 @@ func AddMeta(key string, value any) {
 	systemMetadata = append(systemMetadata, common.Pair(key, value))
 }
 
+// Pair adds another shortcut to create tags
+func Pair(key string, value any) *common.Tag {
+	return common.Pair(key, value)
+}
+
+// Pairs adds another shortcut to creating tags
+func Pairs(attrs ...any) []*common.Tag {
+	return common.Pairs(attrs...)
+}
+
 // Drain logs and traces then close down gloegg
 func Drain() {
 	close(ingestionChannel)

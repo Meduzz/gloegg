@@ -1,23 +1,21 @@
 package tracing
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/Meduzz/gloegg/common"
-	"github.com/Meduzz/gloegg/tracing/tracingid"
 	"github.com/Meduzz/helper/fp/slice"
+	"github.com/Meduzz/helper/hashing"
 	"github.com/go-stack/stack"
 )
 
 type (
 	tracingImpl struct {
 		id           string
+		parent       string
 		name         string
 		start        time.Time
-		ctx          context.Context
 		tags         []*common.Tag
 		eventChannel chan *common.Event
 		done         bool
@@ -28,10 +26,6 @@ type (
 	TracingError struct {
 		Error string          `json:"error"`
 		Stack []*common.Stack `json:"stack"`
-	}
-
-	contextKey struct {
-		key string
 	}
 )
 
@@ -44,99 +38,25 @@ var (
 )
 
 func New(name string, channel chan *common.Event, logger string, tags ...*common.Tag) common.Trace {
-	it, _ := NewFromContext(name, nil, channel, logger, tags...)
-
-	return it
-}
-
-func NewFromContext(name string, ctx context.Context, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
-	var traceId *tracingid.TraceId
-
-	if ctx == nil {
-		ctx = context.Background()
-		traceId = tracingid.NewTracingID(name)
-	} else {
-		p, ok := ctx.Value(&contextKey{GloeggTraceKey}).(string)
-
-		if ok {
-			newId, err := tracingid.NewTracingIDFromParent(p, name)
-
-			if err != nil {
-				return nil, errors.Join(ErrUnreadableTraceID, err)
-			}
-
-			traceId = newId
-		} else {
-			traceId = tracingid.NewTracingID(name)
-		}
-	}
-
-	id, err := tracingid.ToString(traceId)
-
-	if err != nil {
-		return nil, err
-	}
-
 	return &tracingImpl{
-		id:           id,
+		id:           hashing.Token(),
+		parent:       "",
 		logger:       logger,
 		name:         name,
-		ctx:          context.WithValue(ctx, &contextKey{GloeggTraceKey}, traceId),
 		tags:         tags,
 		start:        time.Now(),
 		eventChannel: channel,
 		done:         false,
 		checkpoints:  make([]*common.CheckpointDTO, 0),
-	}, nil
+	}
 }
 
-func NewFromID(id, name string, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
-	traceId, err := tracingid.NewTracingIDFromParent(id, name)
-
-	if err != nil {
-		return nil, err
-	}
-
-	ctx := context.Background()
-
-	id, err = tracingid.ToString(traceId)
-
-	if err != nil {
-		return nil, err
-	}
-
+func NewFromID(parent, name string, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
 	return &tracingImpl{
-		id:           id,
+		id:           hashing.Token(),
+		parent:       parent,
 		logger:       logger,
 		name:         name,
-		ctx:          context.WithValue(ctx, &contextKey{GloeggTraceKey}, traceId),
-		tags:         tags,
-		start:        time.Now(),
-		eventChannel: channel,
-		done:         false,
-		checkpoints:  make([]*common.CheckpointDTO, 0),
-	}, nil
-}
-
-func NewFromParent(parent common.Trace, name string, channel chan *common.Event, logger string, tags ...*common.Tag) (common.Trace, error) {
-	ctx := context.Background()
-	traceId, err := tracingid.NewTracingIDFromParent(parent.ID(), name)
-
-	if err != nil {
-		return nil, err
-	}
-
-	id, err := tracingid.ToString(traceId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &tracingImpl{
-		id:           id,
-		logger:       logger,
-		name:         name,
-		ctx:          context.WithValue(ctx, &contextKey{GloeggTraceKey}, traceId),
 		tags:         tags,
 		start:        time.Now(),
 		eventChannel: channel,
@@ -147,6 +67,10 @@ func NewFromParent(parent common.Trace, name string, channel chan *common.Event,
 
 func (t *tracingImpl) ID() string {
 	return t.id
+}
+
+func (t *tracingImpl) Parent() string {
+	return t.parent
 }
 
 func (t *tracingImpl) Done(err error) {
@@ -163,7 +87,7 @@ func (t *tracingImpl) Done(err error) {
 
 	event := &common.Event{}
 	event.Created = time.Now()
-	event.Kind = "TRACE"
+	event.Kind = common.KindTrace
 	event.Metadata = t.tags
 	event.Logger = t.logger
 
@@ -188,10 +112,6 @@ func (t *tracingImpl) Done(err error) {
 
 	t.eventChannel <- event
 	t.done = true
-}
-
-func (t *tracingImpl) Context() context.Context {
-	return t.ctx
 }
 
 func (t *tracingImpl) AddMetadata(tags ...*common.Tag) {

@@ -6,13 +6,12 @@ type (
 	boolToggle struct {
 		name     string
 		value    bool
-		typ      string
 		metadata []*common.Tag
 	}
 )
 
 func newBoolToggle(name string, value bool, metadata []*common.Tag) BoolToggle {
-	return &boolToggle{name, value, "bool", metadata}
+	return &boolToggle{name, value, metadata}
 }
 
 func (b *boolToggle) Matches(needle ...*common.Tag) bool {
@@ -24,7 +23,7 @@ func (b *boolToggle) Name() string {
 }
 
 func (b *boolToggle) Type() string {
-	return b.typ
+	return KindBool
 }
 
 func (b *boolToggle) Value() bool {

@@ -5,14 +5,13 @@ import "github.com/Meduzz/gloegg/common"
 type (
 	objectToggle struct {
 		name     string
-		typ      string
 		value    map[string]any
 		metadata []*common.Tag
 	}
 )
 
 func newObjectToggle(name string, value map[string]any, metadata []*common.Tag) ObjectToggle {
-	return &objectToggle{name, "object", value, metadata}
+	return &objectToggle{name, value, metadata}
 }
 
 func (o *objectToggle) Matches(other ...*common.Tag) bool {
@@ -24,7 +23,7 @@ func (o *objectToggle) Name() string {
 }
 
 func (o *objectToggle) Type() string {
-	return o.typ
+	return KindObject
 }
 
 func (o *objectToggle) Value() map[string]any {

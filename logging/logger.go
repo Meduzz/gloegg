@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -43,16 +42,8 @@ func (l *loggingFacade) Trace(name string, tags ...*common.Tag) common.Trace {
 	return tracing.New(name, l.eventChannel, l.name, append(l.metadata, tags...)...)
 }
 
-func (l *loggingFacade) TraceContext(name string, parent context.Context, tags ...*common.Tag) (common.Trace, error) {
-	return tracing.NewFromContext(name, parent, l.eventChannel, l.name, append(l.metadata, tags...)...)
-}
-
-func (l *loggingFacade) TraceFromParentID(id, name string, tags ...*common.Tag) (common.Trace, error) {
-	return tracing.NewFromID(id, name, l.eventChannel, l.name, tags...)
-}
-
-func (l *loggingFacade) TraceFromParent(name string, parent common.Trace, tags ...*common.Tag) (common.Trace, error) {
-	return tracing.NewFromParent(parent, name, l.eventChannel, l.name, tags...)
+func (l *loggingFacade) TraceFromParentID(parent, name string, tags ...*common.Tag) (common.Trace, error) {
+	return tracing.NewFromID(parent, name, l.eventChannel, l.name, tags...)
 }
 
 func (l *loggingFacade) log(level, msg string, tags []*common.Tag, err error) {
@@ -61,7 +52,7 @@ func (l *loggingFacade) log(level, msg string, tags []*common.Tag, err error) {
 	log.Level = level
 
 	event := &common.Event{}
-	event.Kind = "LOG"
+	event.Kind = common.KindLog
 	event.Metadata = slice.Concat(l.metadata, tags)
 	event.Created = time.Now()
 	event.Logger = l.name

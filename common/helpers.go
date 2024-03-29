@@ -7,6 +7,20 @@ func Pair(key string, value interface{}) *Tag {
 	return &Tag{key, value}
 }
 
+func Pairs(attrs ...any) []*Tag {
+	arrayOfPairs := slice.Partition(attrs, 2)
+
+	return slice.Fold(arrayOfPairs, make([]*Tag, 0), func(pair []any, agg []*Tag) []*Tag {
+		key, ok := pair[0].(string)
+
+		if ok && len(pair) == 2 {
+			return append(agg, Pair(key, pair[1]))
+		}
+
+		return agg
+	})
+}
+
 // AsMap turn a bunch of tags into map[string]interface{}
 func AsMap(tags ...*Tag) map[string]interface{} {
 	it := make(map[string]interface{})

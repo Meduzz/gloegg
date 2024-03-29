@@ -5,14 +5,13 @@ import "github.com/Meduzz/gloegg/common"
 type (
 	intToggle struct {
 		name     string
-		typ      string
 		value    int
 		metadata []*common.Tag
 	}
 )
 
 func newIntToggle(name string, value int, metadata []*common.Tag) IntToggle {
-	return &intToggle{name, "int", value, metadata}
+	return &intToggle{name, value, metadata}
 }
 
 func (i *intToggle) Matches(needle ...*common.Tag) bool {
@@ -24,7 +23,7 @@ func (i *intToggle) Name() string {
 }
 
 func (i *intToggle) Type() string {
-	return i.typ
+	return KindInt
 }
 
 func (i *intToggle) Value() int {

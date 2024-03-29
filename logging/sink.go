@@ -14,12 +14,12 @@ var (
 
 func StartSink(channel chan *common.Event, doneChan chan int) {
 	for event := range channel {
-		settings := toggles.GetObjectToggle(FlagForLogger(event.Logger))
+		settings := toggles.GetStringToggle(FlagForLogger(event.Logger))
 
 		switch event.Kind {
-		case "LOG":
+		case common.KindLog:
 			handleLog(event, settings)
-		case "TRACE":
+		case common.KindTrace:
 			handleTrace(event, settings)
 		default:
 			fmt.Printf("unknown kind: %s, dropping\n", event.Kind)
@@ -33,12 +33,18 @@ func AddSink(sink common.Sink) {
 	sinks = append(sinks, sink)
 }
 
+func RemoveSink(sink common.Sink) {
+	sinks = slice.Filter(sinks, func(s common.Sink) bool {
+		return s.Name() != sink.Name()
+	})
+}
+
 func FlagForLogger(name string) string {
 	return fmt.Sprintf("logger.%s", name)
 }
 
-func handleLog(event *common.Event, settings toggles.ObjectToggle) {
-	logLevel := settings.DefaultString("level", "info")
+func handleLog(event *common.Event, settings toggles.StringToggle) {
+	logLevel := settings.DefaultValue("info")
 
 	if shouldLog(logLevel, event.Log.Level) {
 		slice.ForEach(sinks, func(sink common.Sink) {
@@ -47,19 +53,16 @@ func handleLog(event *common.Event, settings toggles.ObjectToggle) {
 	}
 }
 
-func handleTrace(event *common.Event, settings toggles.ObjectToggle) {
-	enabled := settings.DefaultBool("tracing", true)
-	logLevel := settings.DefaultString("level", "info")
+func handleTrace(event *common.Event, settings toggles.StringToggle) {
+	logLevel := settings.DefaultValue("info")
 
 	event.Trace.Checkpoints = slice.Filter(event.Trace.Checkpoints, func(log *common.CheckpointDTO) bool {
 		return shouldLog(logLevel, log.Level)
 	})
 
-	if enabled {
-		slice.ForEach(sinks, func(sink common.Sink) {
-			sink.Handle(event)
-		})
-	}
+	slice.ForEach(sinks, func(sink common.Sink) {
+		sink.Handle(event)
+	})
 }
 
 func shouldLog(system, event string) bool {
@@ -73,7 +76,7 @@ func shouldLog(system, event string) bool {
 	case common.LevelInfo:
 		allowed = append(allowed, common.LevelInfo, common.LevelWarn, common.LevelError)
 	case common.LevelDebug:
-		allowed = append(allowed, common.LevelDebug, common.LevelInfo, common.LevelError, common.LevelWarn)
+		allowed = append(allowed, common.LevelDebug, common.LevelInfo, common.LevelWarn, common.LevelError)
 	default:
 	}
 

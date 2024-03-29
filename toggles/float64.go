@@ -5,14 +5,13 @@ import "github.com/Meduzz/gloegg/common"
 type (
 	float64Toggle struct {
 		name     string
-		typ      string
 		value    float64
 		metadata []*common.Tag
 	}
 )
 
 func newFloat64Toggle(name string, value float64, metadata []*common.Tag) Float64Toggle {
-	return &float64Toggle{name, "float64", value, metadata}
+	return &float64Toggle{name, value, metadata}
 }
 
 func (i *float64Toggle) Matches(needle ...*common.Tag) bool {
@@ -24,7 +23,7 @@ func (i *float64Toggle) Name() string {
 }
 
 func (i *float64Toggle) Type() string {
-	return i.typ
+	return KindFloat64
 }
 
 func (i *float64Toggle) Value() float64 {

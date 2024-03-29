@@ -1,9 +1,5 @@
 package common
 
-import (
-	"context"
-)
-
 type (
 	Logger interface {
 		// Info - log a msg at info level, providing additional context via tags
@@ -21,22 +17,15 @@ type (
 		// Trace - create a new named trace, providing additional context via tags
 		Trace(name string, tags ...*Tag) Trace
 
-		// TraceContext - create a new named trace, providing additional context via tags
-		TraceContext(name string, parent context.Context, tags ...*Tag) (Trace, error)
-
 		// TraceParentID - create a new named trace from a parent trace id.
 		TraceFromParentID(parent, name string, tags ...*Tag) (Trace, error)
-
-		// TraceFromParent - create a new named trace from a parent trace.
-		TraceFromParent(name string, praent Trace, tags ...*Tag) (Trace, error)
 	}
 
 	Trace interface {
 		// Fetch the id of this trace
 		ID() string
 
-		// Fetch the context of this trace
-		Context() context.Context
+		Parent() string
 
 		// Complete this trace with an optional error
 		Done(error)
@@ -74,4 +63,6 @@ const (
 	LevelInfo  = "info"
 	LevelWarn  = "warn"
 	LevelError = "error"
+	KindLog    = "LOG"
+	KindTrace  = "TRACE"
 )

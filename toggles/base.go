@@ -21,8 +21,6 @@ const (
 	KindObject  = "object"
 )
 
-// TODO add way to remove a toggle
-
 func SetStringToggle(name, value string, selectors ...*common.Tag) StringToggle {
 	toggle := GetStringToggle(name, selectors...)
 	toggle.Set(value)

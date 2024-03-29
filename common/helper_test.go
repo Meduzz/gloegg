@@ -22,3 +22,23 @@ func TestFindTags(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestPairs(t *testing.T) {
+	subject := Pairs("first", 1, "second", 2, "ignored")
+
+	if len(subject) != 2 {
+		t.Errorf("invalid length of subject, expected 2 have %d", len(subject))
+	}
+
+	first := FindTag(subject, "first")
+
+	if first.Int() != 1 {
+		t.Errorf("first value was not 1 but %d", first.Int())
+	}
+
+	second := FindTag(subject, "second")
+
+	if second.Int() != 2 {
+		t.Errorf("second value was not 2 but %d", second.Int())
+	}
+}

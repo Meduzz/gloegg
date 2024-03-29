@@ -10,13 +10,12 @@ type (
 	stringToggle struct {
 		name     string
 		value    string
-		typ      string
 		metadata []*common.Tag
 	}
 )
 
 func newStringToggle(name, value string, metadata []*common.Tag) StringToggle {
-	return &stringToggle{name, value, "string", metadata}
+	return &stringToggle{name, value, metadata}
 }
 
 func (s *stringToggle) Name() string {
@@ -28,7 +27,7 @@ func (s *stringToggle) Matches(needle ...*common.Tag) bool {
 }
 
 func (s *stringToggle) Type() string {
-	return s.typ
+	return KindString
 }
 
 func (s *stringToggle) Value() string {
