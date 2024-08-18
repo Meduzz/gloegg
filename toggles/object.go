@@ -1,45 +1,48 @@
 package toggles
 
-import "github.com/Meduzz/gloegg/common"
-
 type (
 	objectToggle struct {
-		name     string
-		value    map[string]any
-		metadata []*common.Tag
+		*base
 	}
 )
 
-func newObjectToggle(name string, value map[string]any, metadata []*common.Tag) ObjectToggle {
-	return &objectToggle{name, value, metadata}
-}
-
-func (o *objectToggle) Matches(other ...*common.Tag) bool {
-	return matches(o.metadata, other)
-}
-
-func (o *objectToggle) Name() string {
-	return o.name
-}
-
-func (o *objectToggle) Type() string {
-	return KindObject
+func newObjectToggle(name string, value map[string]any, callback chan *UpdatedToggle) ObjectToggle {
+	return &objectToggle{&base{name, KindObject, value, callback}}
 }
 
 func (o *objectToggle) Value() map[string]any {
-	return o.value
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return make(map[string]any)
+	}
+
+	return result
 }
 
 func (o *objectToggle) Set(v map[string]any) {
 	o.value = v
+	o.callback <- o.Updated()
 }
 
 func (o *objectToggle) SetField(key string, value any) {
-	o.value[key] = value
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return
+	}
+
+	result[key] = value
 }
 
 func (o *objectToggle) DefaultInt(key string, defaultValue int) int {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue
@@ -55,7 +58,13 @@ func (o *objectToggle) DefaultInt(key string, defaultValue int) int {
 }
 
 func (o *objectToggle) DefaultInt64(key string, defaultValue int64) int64 {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue
@@ -71,7 +80,13 @@ func (o *objectToggle) DefaultInt64(key string, defaultValue int64) int64 {
 }
 
 func (o *objectToggle) DefaultString(key string, defaultValue string) string {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue
@@ -87,7 +102,13 @@ func (o *objectToggle) DefaultString(key string, defaultValue string) string {
 }
 
 func (o *objectToggle) DefaultFloat(key string, defaultValue float32) float32 {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue
@@ -103,7 +124,13 @@ func (o *objectToggle) DefaultFloat(key string, defaultValue float32) float32 {
 }
 
 func (o *objectToggle) DefaultFloat64(key string, defaultValue float64) float64 {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue
@@ -119,7 +146,13 @@ func (o *objectToggle) DefaultFloat64(key string, defaultValue float64) float64 
 }
 
 func (o *objectToggle) DefaultBool(key string, defaultValue bool) bool {
-	it, ok := o.value[key]
+	result, ok := o.value.(map[string]any)
+
+	if !ok {
+		return defaultValue
+	}
+
+	it, ok := result[key]
 
 	if !ok {
 		return defaultValue

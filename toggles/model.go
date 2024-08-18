@@ -1,12 +1,9 @@
 package toggles
 
-import "github.com/Meduzz/gloegg/common"
-
 type (
 	Toggle interface {
-		Matches(...*common.Tag) bool
 		Name() string
-		Type() string
+		Kind() string
 	}
 
 	StringToggle interface {
@@ -76,33 +73,33 @@ type (
 		DefaultFloat64(string, float64) float64
 		DefaultBool(string, bool) bool
 	}
+
+	base struct {
+		name     string
+		kind     string
+		value    any
+		callback chan *UpdatedToggle
+	}
+
+	UpdatedToggle struct {
+		Name  string
+		Kind  string
+		Value any
+	}
 )
 
-func matches(self, other []*common.Tag) bool {
-	var smallest, largest []*common.Tag
+func (b *base) Name() string {
+	return b.name
+}
 
-	if len(self) > len(other) {
-		smallest = other
-		largest = self
-	} else {
-		smallest = self
-		largest = other
+func (b *base) Kind() string {
+	return b.kind
+}
+
+func (b *base) Updated() *UpdatedToggle {
+	return &UpdatedToggle{
+		Name:  b.name,
+		Kind:  b.kind,
+		Value: b.value,
 	}
-
-	first := common.AsMap(largest...)
-	second := common.AsMap(smallest...)
-
-	for key, value := range second {
-		v2, ok := first[key]
-
-		if !ok {
-			return false
-		}
-
-		if value != v2 {
-			return false
-		}
-	}
-
-	return true
 }

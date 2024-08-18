@@ -3,12 +3,12 @@ package toggles
 import (
 	"fmt"
 
-	"github.com/Meduzz/gloegg/common"
 	"github.com/Meduzz/helper/fp/slice"
 )
 
 var (
 	typedToggles []Toggle
+	callbacks    chan *UpdatedToggle
 )
 
 const (
@@ -21,56 +21,60 @@ const (
 	KindObject  = "object"
 )
 
-func SetStringToggle(name, value string, selectors ...*common.Tag) StringToggle {
-	toggle := GetStringToggle(name, selectors...)
+func init() {
+	callbacks = make(chan *UpdatedToggle, 100)
+}
+
+func SetStringToggle(name, value string) StringToggle {
+	toggle := GetStringToggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetIntToggle(name string, value int, selectors ...*common.Tag) IntToggle {
-	toggle := GetIntToggle(name, selectors...)
+func SetIntToggle(name string, value int) IntToggle {
+	toggle := GetIntToggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetInt64Toggle(name string, value int64, selectors ...*common.Tag) Int64Toggle {
-	toggle := GetInt64Toggle(name, selectors...)
+func SetInt64Toggle(name string, value int64) Int64Toggle {
+	toggle := GetInt64Toggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetFloat64Toggle(name string, value float64, selectors ...*common.Tag) Float64Toggle {
-	toggle := GetFloat64Toggle(name, selectors...)
+func SetFloat64Toggle(name string, value float64) Float64Toggle {
+	toggle := GetFloat64Toggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetFloat32Toggle(name string, value float32, selectors ...*common.Tag) Float32Toggle {
-	toggle := GetFloat32Toggle(name, selectors...)
+func SetFloat32Toggle(name string, value float32) Float32Toggle {
+	toggle := GetFloat32Toggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetBoolToggle(name string, value bool, selectors ...*common.Tag) BoolToggle {
-	toggle := GetBoolToggle(name, selectors...)
+func SetBoolToggle(name string, value bool) BoolToggle {
+	toggle := GetBoolToggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetObjectToggle(name string, value map[string]any, selectors ...*common.Tag) ObjectToggle {
-	toggle := GetObjectToggle(name, selectors...)
+func SetObjectToggle(name string, value map[string]any) ObjectToggle {
+	toggle := GetObjectToggle(name)
 	toggle.Set(value)
 
 	return toggle
 }
 
-func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (Toggle, error) {
+func SetToggle(name, kind string, value interface{}) (Toggle, error) {
 	switch kind {
 	case KindString:
 		val, ok := value.(string)
@@ -79,7 +83,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetStringToggle(name, val, selectors...), nil
+		return SetStringToggle(name, val), nil
 	case KindInt:
 		val, ok := value.(int)
 
@@ -87,7 +91,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetIntToggle(name, val, selectors...), nil
+		return SetIntToggle(name, val), nil
 	case KindInt64:
 		val, ok := value.(int64)
 
@@ -95,7 +99,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetInt64Toggle(name, val, selectors...), nil
+		return SetInt64Toggle(name, val), nil
 	case KindFloat64:
 		val, ok := value.(float64)
 
@@ -103,7 +107,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetFloat64Toggle(name, val, selectors...), nil
+		return SetFloat64Toggle(name, val), nil
 	case KindFloat32:
 		val, ok := value.(float32)
 
@@ -111,7 +115,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetFloat32Toggle(name, val, selectors...), nil
+		return SetFloat32Toggle(name, val), nil
 	case KindBool:
 		val, ok := value.(bool)
 
@@ -119,7 +123,7 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetBoolToggle(name, val, selectors...), nil
+		return SetBoolToggle(name, val), nil
 	case KindObject:
 		val, ok := value.(map[string]interface{})
 
@@ -127,169 +131,169 @@ func SetToggle(name, kind string, value interface{}, selectors ...*common.Tag) (
 			return nil, fmt.Errorf("could not convert value to type %s", kind)
 		}
 
-		return SetObjectToggle(name, val, selectors...), nil
+		return SetObjectToggle(name, val), nil
 	default:
 		return nil, fmt.Errorf("unknown kind: %s", kind)
 	}
 }
 
-func GetStringToggle(name string, selectors ...*common.Tag) StringToggle {
+func GetStringToggle(name string) StringToggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindString && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindString && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(StringToggle)
 
 		if !ok {
-			t = newStringToggle(name, "", selectors)
+			t = newStringToggle(name, "", callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newStringToggle(name, "", selectors)
+		t := newStringToggle(name, "", callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetIntToggle(name string, selectors ...*common.Tag) IntToggle {
+func GetIntToggle(name string) IntToggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindInt && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindInt && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(IntToggle)
 
 		if !ok {
-			t = newIntToggle(name, 0, selectors)
+			t = newIntToggle(name, 0, callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newIntToggle(name, 0, selectors)
+		t := newIntToggle(name, 0, callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetInt64Toggle(name string, selectors ...*common.Tag) Int64Toggle {
+func GetInt64Toggle(name string) Int64Toggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindInt64 && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindInt64 && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(Int64Toggle)
 
 		if !ok {
-			t = newInt64Toggle(name, 0, selectors)
+			t = newInt64Toggle(name, 0, callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newInt64Toggle(name, 0, selectors)
+		t := newInt64Toggle(name, 0, callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetFloat64Toggle(name string, selectors ...*common.Tag) Float64Toggle {
+func GetFloat64Toggle(name string) Float64Toggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindFloat64 && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindFloat64 && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(Float64Toggle)
 
 		if !ok {
-			t = newFloat64Toggle(name, 0, selectors)
+			t = newFloat64Toggle(name, 0, callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newFloat64Toggle(name, 0, selectors)
+		t := newFloat64Toggle(name, 0, callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetFloat32Toggle(name string, selectors ...*common.Tag) Float32Toggle {
+func GetFloat32Toggle(name string) Float32Toggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindFloat32 && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindFloat32 && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(Float32Toggle)
 
 		if !ok {
-			t = newFloat32Toggle(name, 0, selectors)
+			t = newFloat32Toggle(name, 0, callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newFloat32Toggle(name, 0, selectors)
+		t := newFloat32Toggle(name, 0, callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetBoolToggle(name string, selectors ...*common.Tag) BoolToggle {
+func GetBoolToggle(name string) BoolToggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindBool && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindBool && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(BoolToggle)
 
 		if !ok {
-			t = newBoolToggle(name, false, selectors)
+			t = newBoolToggle(name, false, callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newBoolToggle(name, false, selectors)
+		t := newBoolToggle(name, false, callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func GetObjectToggle(name string, selectors ...*common.Tag) ObjectToggle {
+func GetObjectToggle(name string) ObjectToggle {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == KindObject && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == KindObject && toggle.Name() == name
 	})
 
 	if len(matches) > 0 {
 		t, ok := matches[0].(ObjectToggle)
 
 		if !ok {
-			t = newObjectToggle(name, make(map[string]any), selectors)
+			t = newObjectToggle(name, make(map[string]any), callbacks)
 			typedToggles = append(typedToggles, t)
 		}
 
 		return t
 	} else {
-		t := newObjectToggle(name, make(map[string]any), selectors)
+		t := newObjectToggle(name, make(map[string]any), callbacks)
 		typedToggles = append(typedToggles, t)
 
 		return t
 	}
 }
 
-func RemoveToggle(name, kind string, selectors ...*common.Tag) {
+func RemoveToggle(name, kind string) {
 	matches := slice.Filter(typedToggles, func(toggle Toggle) bool {
-		return toggle.Type() == kind && toggle.Name() == name && toggle.Matches(selectors...)
+		return toggle.Kind() == kind && toggle.Name() == name
 	})
 
 	pool := typedToggles
@@ -298,7 +302,7 @@ func RemoveToggle(name, kind string, selectors ...*common.Tag) {
 	slice.ForEach(matches, func(it Toggle) {
 		for _, t := range pool {
 			if t.Name() == it.Name() {
-				if t.Type() == it.Type() {
+				if t.Kind() == it.Kind() {
 					continue
 				}
 			}

@@ -1,45 +1,38 @@
 package toggles
 
-import "github.com/Meduzz/gloegg/common"
-
 type (
 	intToggle struct {
-		name     string
-		value    int
-		metadata []*common.Tag
+		*base
 	}
 )
 
-func newIntToggle(name string, value int, metadata []*common.Tag) IntToggle {
-	return &intToggle{name, value, metadata}
-}
-
-func (i *intToggle) Matches(needle ...*common.Tag) bool {
-	return matches(needle, i.metadata)
-}
-
-func (i *intToggle) Name() string {
-	return i.name
-}
-
-func (i *intToggle) Type() string {
-	return KindInt
+func newIntToggle(name string, value int, callback chan *UpdatedToggle) IntToggle {
+	return &intToggle{&base{name, KindInt, value, callback}}
 }
 
 func (i *intToggle) Value() int {
-	return i.value
+	result, ok := i.value.(int)
+
+	if !ok {
+		return 0
+	}
+
+	return result
 }
 
 func (i *intToggle) Set(value int) {
 	i.value = value
+	callbacks <- i.Updated()
 }
 
 func (i *intToggle) DefaultValue(value int) int {
-	if i.value == 0 {
+	result := i.Value()
+
+	if result == 0 {
 		return value
 	}
 
-	return i.value
+	return result
 }
 
 func (i *intToggle) Equals(value int) bool {
@@ -47,9 +40,9 @@ func (i *intToggle) Equals(value int) bool {
 }
 
 func (i *intToggle) MoreThan(value int) bool {
-	return i.value > value
+	return i.Value() > value
 }
 
 func (i *intToggle) LessThan(value int) bool {
-	return i.value < value
+	return i.Value() < value
 }
