@@ -47,3 +47,7 @@ func Pair(key string, value any) *common.Tag {
 func Pairs(attrs ...any) []*common.Tag {
 	return common.Pairs(attrs...)
 }
+
+func SetHandlerFactory(factory logging.HandlerFactory) {
+	handlerFactory = factory
+}
