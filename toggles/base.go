@@ -9,6 +9,7 @@ import (
 var (
 	typedToggles []Toggle
 	callbacks    chan *UpdatedToggle
+	subscribers  []Subscriber
 )
 
 const (
@@ -23,6 +24,19 @@ const (
 
 func init() {
 	callbacks = make(chan *UpdatedToggle, 100)
+	subscribers = make([]Subscriber, 0)
+
+	go func() {
+		for update := range callbacks {
+			slice.ForEach(subscribers, func(sub Subscriber) {
+				sub(update)
+			})
+		}
+	}()
+}
+
+func Subscribe(handler func(*UpdatedToggle)) {
+	subscribers = append(subscribers, handler)
 }
 
 func SetStringToggle(name, value string) StringToggle {

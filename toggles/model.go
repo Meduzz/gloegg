@@ -86,6 +86,8 @@ type (
 		Kind  string
 		Value any
 	}
+
+	Subscriber func(*UpdatedToggle)
 )
 
 func (b *base) Name() string {

@@ -328,4 +328,27 @@ func TestToggles(t *testing.T) {
 			t.Errorf("toggle value was not 'removed' but '%s'", subject.Value())
 		}
 	})
+
+	t.Run("Test subscribe", func(t *testing.T) {
+		subject := SetStringToggle("value", "good")
+		feedback := make(chan string, 1)
+
+		Subscribe(func(ut *UpdatedToggle) {
+			if ut.Kind != KindString && ut.Name != "value" {
+				return
+			}
+
+			feedback <- ut.Value.(string)
+		})
+
+		subject.Set("bad")
+
+		<-feedback // good
+		result := <-feedback
+
+		if result != "bad" {
+			t.Errorf("value was not bad but %s", result)
+		}
+
+	})
 }
