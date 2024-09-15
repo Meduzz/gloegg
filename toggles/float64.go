@@ -1,45 +1,38 @@
 package toggles
 
-import "github.com/Meduzz/gloegg/common"
-
 type (
 	float64Toggle struct {
-		name     string
-		value    float64
-		metadata []*common.Tag
+		*base
 	}
 )
 
-func newFloat64Toggle(name string, value float64, metadata []*common.Tag) Float64Toggle {
-	return &float64Toggle{name, value, metadata}
-}
-
-func (i *float64Toggle) Matches(needle ...*common.Tag) bool {
-	return matches(needle, i.metadata)
-}
-
-func (i *float64Toggle) Name() string {
-	return i.name
-}
-
-func (i *float64Toggle) Type() string {
-	return KindFloat64
+func newFloat64Toggle(name string, value float64, callback chan *UpdatedToggle) Float64Toggle {
+	return &float64Toggle{&base{name, KindFloat64, value, callback}}
 }
 
 func (i *float64Toggle) Value() float64 {
-	return i.value
+	result, ok := i.value.(float64)
+
+	if !ok {
+		return 0
+	}
+
+	return result
 }
 
 func (i *float64Toggle) Set(value float64) {
 	i.value = value
+	i.callback <- i.Updated()
 }
 
 func (i *float64Toggle) DefaultValue(value float64) float64 {
-	if i.value == 0 {
+	result := i.Value()
+
+	if result == 0 {
 		return value
 	}
 
-	return i.value
+	return result
 }
 
 func (i *float64Toggle) Equals(value float64) bool {
@@ -47,9 +40,9 @@ func (i *float64Toggle) Equals(value float64) bool {
 }
 
 func (i *float64Toggle) MoreThan(value float64) bool {
-	return i.value > value
+	return i.Value() > value
 }
 
 func (i *float64Toggle) LessThan(value float64) bool {
-	return i.value < value
+	return i.Value() < value
 }

@@ -1,6 +1,10 @@
 package common
 
-import "github.com/Meduzz/helper/fp/slice"
+import (
+	"log/slog"
+
+	"github.com/Meduzz/helper/fp/slice"
+)
 
 // Pair create a tag
 func Pair(key string, value interface{}) *Tag {
@@ -43,54 +47,8 @@ func AsTags(in map[string]interface{}) []*Tag {
 	return out
 }
 
-func FindTag(tags []*Tag, key string) *Tag {
-	matches := slice.Filter(tags, func(tag *Tag) bool {
-		return tag.Key == key
+func (t Tags) ToSlog() []slog.Attr {
+	return slice.Map(t, func(tag *Tag) slog.Attr {
+		return slog.Any(tag.Key, tag.Value)
 	})
-
-	if len(matches) == 0 {
-		return nil
-	}
-
-	return matches[0]
-}
-
-func (t *Tag) String() string {
-	v, ok := t.Value.(string)
-
-	if !ok {
-		return ""
-	}
-
-	return v
-}
-
-func (t *Tag) Int() int {
-	v, ok := t.Value.(int)
-
-	if !ok {
-		return 0
-	}
-
-	return v
-}
-
-func (t *Tag) Int64() int64 {
-	v, ok := t.Value.(int64)
-
-	if !ok {
-		return 0
-	}
-
-	return v
-}
-
-func (t *Tag) Bool() bool {
-	v, ok := t.Value.(bool)
-
-	if !ok {
-		return false
-	}
-
-	return v
 }

@@ -1,6 +1,4 @@
-github.com/Meduzz/helper v0.0.0-20230423150526-e0e52ad29509 h1:56OemXB0t/Xj9mpdN6oOewjXM66HvnR1tcYD6X3uYEg=
-github.com/Meduzz/helper v0.0.0-20230423150526-e0e52ad29509/go.mod h1:f3iFzvC8ArgPnGyjyVchT6aqPUHlsnuxWVVs7J2dzeE=
 github.com/Meduzz/helper v0.0.0-20240329154719-d5d97b464935 h1:/pTQk1bAv9AA2Za6vH8ZtMdHJmMBCEUk3JUdELTEZUg=
 github.com/Meduzz/helper v0.0.0-20240329154719-d5d97b464935/go.mod h1:n51bAfxywQQv0Rccrh82yIh/tWJlT8qiLEvoJcihvik=
-github.com/go-stack/stack v1.8.1 h1:ntEHSVwIt7PNXNpgPmVfMrNhLtgjlmnZha2kOpuRiDw=
-github.com/go-stack/stack v1.8.1/go.mod h1:dcoOX6HbPZSZptuspn9bctJ+N/CnF5gGygcUP3XYfe4=
+github.com/Meduzz/helper v0.0.0-20240730101358-04a510a685f3 h1:J5kBZb4ZNpjRl5PiqWaI3DD/Agk3IcrX2wyIWxLRl8s=
+github.com/Meduzz/helper v0.0.0-20240730101358-04a510a685f3/go.mod h1:85SN6LEsgNmz1A1/v826S+wEiEGJVtgOZugr2Cy4xn8=

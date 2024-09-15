@@ -2,355 +2,353 @@ package toggles
 
 import (
 	"testing"
-
-	"github.com/Meduzz/gloegg/common"
 )
 
-func TestTypes(t *testing.T) {
-	s := SetStringToggle("string", "asdf")
-	sVal := s.DefaultValue("fail")
-
-	if sVal != "asdf" {
-		t.Errorf("strVal was not 'asdf' but '%s'", sVal)
-		t.FailNow()
-	}
-
-	s.Set("test")
-	sVal = s.DefaultValue("fail")
-
-	if sVal != "test" {
-		t.Errorf("strVal was not 'test' but '%s'", sVal)
-		t.FailNow()
-	}
-
-	i := SetIntToggle("int", 1)
-	iVal := i.DefaultValue(0)
-
-	if iVal != 1 {
-		t.Errorf("iVal was not '1' but '%d'", iVal)
-		t.FailNow()
-	}
-
-	if !i.MoreThan(0) {
-		t.Errorf("0 was not less than iVal(%d)", iVal)
-		t.FailNow()
-	}
-
-	if !i.LessThan(2) {
-		t.Errorf("2 was not more than iVal(%d)", iVal)
-		t.FailNow()
-	}
-
-	i.Set(2)
-
-	iVal = i.DefaultValue(0)
-
-	if iVal != 2 {
-		t.Errorf("iVal was not '2' but '%d'", iVal)
-		t.FailNow()
-	}
-
-	i64 := SetInt64Toggle("int64", int64(1))
-	i64Val := i64.DefaultValue(0)
-
-	if i64Val != int64(1) {
-		t.Errorf("i64Val was not '1' but '%d'", i64Val)
-		t.FailNow()
-	}
-
-	if !i64.MoreThan(0) {
-		t.Errorf("0 was not less that i64Val(%d)", i64Val)
-		t.FailNow()
-	}
-
-	if !i64.LessThan(2) {
-		t.Errorf("2 was not more than i64Val(%d)", i64Val)
-		t.FailNow()
-	}
-
-	i64.Set(2)
-	i64Val = i64.DefaultValue(0)
-
-	if i64Val != int64(2) {
-		t.Errorf("i64Val was not '2' but '%d'", i64Val)
-		t.FailNow()
-	}
-
-	f := SetFloat32Toggle("float", float32(0.1))
-	fVal := f.DefaultValue(0.2)
-
-	if fVal != 0.1 {
-		t.Errorf("fVal was not '0.1' but '%f'", fVal)
-		t.FailNow()
-	}
-
-	if !f.MoreThan(0.0) {
-		t.Errorf("0.0 was not less that fVal(%f)", fVal)
-		t.FailNow()
-	}
-
-	if !f.LessThan(0.2) {
-		t.Errorf("0.2 was not more than fVal(%f)", fVal)
-		t.FailNow()
-	}
-
-	f.Set(0.2)
-	fVal = f.DefaultValue(0.0)
-
-	if fVal != 0.2 {
-		t.Errorf("fVal was not '0.2' but '%f'", fVal)
-		t.FailNow()
-	}
-
-	f64 := SetFloat64Toggle("float64", float64(0.1))
-	f64Val := f64.DefaultValue(0.2)
-
-	if f64Val != float64(0.1) {
-		t.Errorf("f64Val was not '0.1' but '%f'", f64Val)
-		t.FailNow()
-	}
+func TestToggles(t *testing.T) {
+	t.Run("Test Types", func(t *testing.T) {
+		s := SetStringToggle("string", "asdf")
+		sVal := s.DefaultValue("fail")
+
+		if sVal != "asdf" {
+			t.Errorf("strVal was not 'asdf' but '%s'", sVal)
+			t.FailNow()
+		}
+
+		s.Set("test")
+		sVal = s.DefaultValue("fail")
+
+		if sVal != "test" {
+			t.Errorf("strVal was not 'test' but '%s'", sVal)
+			t.FailNow()
+		}
+
+		i := SetIntToggle("int", 1)
+		iVal := i.DefaultValue(0)
+
+		if iVal != 1 {
+			t.Errorf("iVal was not '1' but '%d'", iVal)
+			t.FailNow()
+		}
+
+		if !i.MoreThan(0) {
+			t.Errorf("0 was not less than iVal(%d)", iVal)
+			t.FailNow()
+		}
+
+		if !i.LessThan(2) {
+			t.Errorf("2 was not more than iVal(%d)", iVal)
+			t.FailNow()
+		}
+
+		i.Set(2)
+
+		iVal = i.DefaultValue(0)
+
+		if iVal != 2 {
+			t.Errorf("iVal was not '2' but '%d'", iVal)
+			t.FailNow()
+		}
+
+		i64 := SetInt64Toggle("int64", int64(1))
+		i64Val := i64.DefaultValue(0)
+
+		if i64Val != int64(1) {
+			t.Errorf("i64Val was not '1' but '%d'", i64Val)
+			t.FailNow()
+		}
+
+		if !i64.MoreThan(0) {
+			t.Errorf("0 was not less that i64Val(%d)", i64Val)
+			t.FailNow()
+		}
+
+		if !i64.LessThan(2) {
+			t.Errorf("2 was not more than i64Val(%d)", i64Val)
+			t.FailNow()
+		}
+
+		i64.Set(2)
+		i64Val = i64.DefaultValue(0)
+
+		if i64Val != int64(2) {
+			t.Errorf("i64Val was not '2' but '%d'", i64Val)
+			t.FailNow()
+		}
+
+		f := SetFloat32Toggle("float", float32(0.1))
+		fVal := f.DefaultValue(0.2)
+
+		if fVal != 0.1 {
+			t.Errorf("fVal was not '0.1' but '%f'", fVal)
+			t.FailNow()
+		}
+
+		if !f.MoreThan(0.0) {
+			t.Errorf("0.0 was not less that fVal(%f)", fVal)
+			t.FailNow()
+		}
+
+		if !f.LessThan(0.2) {
+			t.Errorf("0.2 was not more than fVal(%f)", fVal)
+			t.FailNow()
+		}
+
+		f.Set(0.2)
+		fVal = f.DefaultValue(0.0)
+
+		if fVal != 0.2 {
+			t.Errorf("fVal was not '0.2' but '%f'", fVal)
+			t.FailNow()
+		}
+
+		f64 := SetFloat64Toggle("float64", float64(0.1))
+		f64Val := f64.DefaultValue(0.2)
+
+		if f64Val != float64(0.1) {
+			t.Errorf("f64Val was not '0.1' but '%f'", f64Val)
+			t.FailNow()
+		}
 
-	if !f64.MoreThan(0.0) {
-		t.Errorf("0.0 was not less that f64Val(%f)", f64Val)
-		t.FailNow()
-	}
+		if !f64.MoreThan(0.0) {
+			t.Errorf("0.0 was not less that f64Val(%f)", f64Val)
+			t.FailNow()
+		}
+
+		if !f64.LessThan(0.2) {
+			t.Errorf("0.2 was not more than f64Val(%f)", f64Val)
+			t.FailNow()
+		}
 
-	if !f64.LessThan(0.2) {
-		t.Errorf("0.2 was not more than f64Val(%f)", f64Val)
-		t.FailNow()
-	}
-
-	f64.Set(0.2)
-	f64Val = f64.DefaultValue(0.0)
+		f64.Set(0.2)
+		f64Val = f64.DefaultValue(0.0)
+
+		if f64Val != float64(0.2) {
+			t.Errorf("f64Val was not '0.2' but '%f'", f64Val)
+			t.FailNow()
+		}
 
-	if f64Val != float64(0.2) {
-		t.Errorf("f64Val was not '0.2' but '%f'", f64Val)
-		t.FailNow()
-	}
-
-	b := SetBoolToggle("bool", true)
-	bVal := b.Value()
+		b := SetBoolToggle("bool", true)
+		bVal := b.Value()
 
-	if !bVal {
-		t.Error("bVal was not true but false")
-		t.FailNow()
-	}
+		if !bVal {
+			t.Error("bVal was not true but false")
+			t.FailNow()
+		}
 
-	b.Set(false)
-	bVal = b.Value()
+		b.Set(false)
+		bVal = b.Value()
 
-	if bVal {
-		t.Error("bVal was not false but true")
-		t.FailNow()
-	}
-
-	data := make(map[string]any)
-	o := SetObjectToggle("object", data)
+		if bVal {
+			t.Error("bVal was not false but true")
+			t.FailNow()
+		}
 
-	oVal := o.Value()
+		data := make(map[string]any)
+		o := SetObjectToggle("object", data)
 
-	if len(oVal) != len(data) {
-		t.Error("oVal was not equal to data")
-		t.FailNow()
-	}
+		oVal := o.Value()
 
-	o.SetField("s", "test")
-	o.SetField("i", 2)
-	o.SetField("i64", int64(2))
-	o.SetField("f", float32(0.2))
-	o.SetField("f64", float64(0.2))
-	o.SetField("b", false)
+		if len(oVal) != len(data) {
+			t.Error("oVal was not equal to data")
+			t.FailNow()
+		}
 
-	sVal = o.DefaultString("s", "")
+		o.SetField("s", "test")
+		o.SetField("i", 2)
+		o.SetField("i64", int64(2))
+		o.SetField("f", float32(0.2))
+		o.SetField("f64", float64(0.2))
+		o.SetField("b", false)
 
-	if sVal != "test" {
-		t.Errorf("strVal was not 'test' but '%s'", sVal)
-		t.FailNow()
-	}
+		sVal = o.DefaultString("s", "")
 
-	iVal = o.DefaultInt("i", 0)
+		if sVal != "test" {
+			t.Errorf("strVal was not 'test' but '%s'", sVal)
+			t.FailNow()
+		}
 
-	if iVal != 2 {
-		t.Errorf("iVal was not '2' but '%d'", iVal)
-		t.FailNow()
-	}
+		iVal = o.DefaultInt("i", 0)
 
-	i64Val = o.DefaultInt64("i64", 0)
+		if iVal != 2 {
+			t.Errorf("iVal was not '2' but '%d'", iVal)
+			t.FailNow()
+		}
 
-	if i64Val != int64(2) {
-		t.Errorf("i64Val was not '2' but '%d'", i64Val)
-		t.FailNow()
-	}
+		i64Val = o.DefaultInt64("i64", 0)
 
-	fVal = o.DefaultFloat("f", float32(0.0))
+		if i64Val != int64(2) {
+			t.Errorf("i64Val was not '2' but '%d'", i64Val)
+			t.FailNow()
+		}
 
-	if fVal != float32(0.2) {
-		t.Errorf("fVal was not '0.2' but '%f'", fVal)
-		t.FailNow()
-	}
+		fVal = o.DefaultFloat("f", float32(0.0))
 
-	f64Val = o.DefaultFloat64("f64", float64(0.0))
+		if fVal != float32(0.2) {
+			t.Errorf("fVal was not '0.2' but '%f'", fVal)
+			t.FailNow()
+		}
 
-	if f64Val != float64(0.2) {
-		t.Errorf("f64Val was not '0.2' but '%f'", f64Val)
-		t.FailNow()
-	}
+		f64Val = o.DefaultFloat64("f64", float64(0.0))
 
-	bVal = o.DefaultBool("b", true)
+		if f64Val != float64(0.2) {
+			t.Errorf("f64Val was not '0.2' but '%f'", f64Val)
+			t.FailNow()
+		}
 
-	if bVal {
-		t.Error("bVal was not false but true")
-		t.FailNow()
-	}
-}
+		bVal = o.DefaultBool("b", true)
 
-func TestSelectors(t *testing.T) {
-	subject := SetStringToggle("name", "good", common.Pair("number", 8), common.Pair("strings", "cool"))
+		if bVal {
+			t.Error("bVal was not false but true")
+			t.FailNow()
+		}
+	})
 
-	// order should not matter
-	if !subject.Matches(common.Pair("strings", "cool"), common.Pair("number", 8)) {
-		t.Error("selectors did not match as expected")
-	}
+	t.Run("Test update value", func(t *testing.T) {
+		subject := SetStringToggle("value", "good")
+		subject.Set("bad")
 
-	// only key match
-	if subject.Matches(common.Pair("strings", "cool!")) {
-		t.Error("unexpected match")
-	}
+		val := subject.DefaultValue("test")
 
-	// only "partial tag" match
-	if subject.Matches(common.Pair("strings", "cool!"), common.Pair("number", 8)) {
-		t.Error("unexpected match")
-	}
+		if val != "bad" {
+			t.Errorf("val was not 'bad' but '%s'", val)
+			t.FailNow()
+		}
+	})
 
-	// full "partial tag" match
-	if !subject.Matches(common.Pair("number", 8)) {
-		t.Error("expected tags to match")
-	}
+	t.Run("Test set string toggle", func(t *testing.T) {
+		toggle, err := SetToggle("string", KindString, "test")
 
-}
+		if err != nil {
+			t.Errorf("creating toggle threw error: %v", err)
+		}
 
-func TestUpdateValue(t *testing.T) {
-	subject := SetStringToggle("value", "good")
-	subject.Set("bad")
+		stringToggle, ok := toggle.(StringToggle)
 
-	val := subject.DefaultValue("test")
+		if !ok {
+			t.Error("toggle was not of string kind")
+		}
 
-	if val != "bad" {
-		t.Errorf("val was not 'bad' but '%s'", val)
-		t.FailNow()
-	}
-}
+		if !stringToggle.Equals("test") {
+			t.Errorf("toggle value was not 'test' but '%s'", stringToggle.Value())
+		}
 
-func TestSetStringToggle(t *testing.T) {
-	toggle, err := SetToggle("string", KindString, "test")
+		stringToggle = GetStringToggle("string")
 
-	if err != nil {
-		t.Errorf("creating toggle threw error: %v", err)
-	}
+		if stringToggle.DefaultValue("ERROR") != "test" {
+			t.Errorf("string toggle value was not 'test' but '%s'", stringToggle.Value())
+		}
 
-	stringToggle, ok := toggle.(StringToggle)
+		toggle, err = SetToggle("string", KindString, "real")
 
-	if !ok {
-		t.Error("toggle was not of string kind")
-	}
+		if err != nil {
+			t.Errorf("creating toggle threw error: %v", err)
+		}
 
-	if !stringToggle.Equals("test") {
-		t.Errorf("toggle value was not 'test' but '%s'", stringToggle.Value())
-	}
+		stringToggle, ok = toggle.(StringToggle)
 
-	stringToggle = GetStringToggle("string")
+		if !ok {
+			t.Error("toggle was not of string kind")
+		}
 
-	if stringToggle.DefaultValue("ERROR") != "test" {
-		t.Errorf("string toggle value was not 'test' but '%s'", stringToggle.Value())
-	}
+		if !stringToggle.Equals("real") {
+			t.Errorf("toggle value was not 'real' but '%s'", stringToggle.Value())
+		}
 
-	toggle, err = SetToggle("string", KindString, "real")
+		stringToggle = GetStringToggle("string")
 
-	if err != nil {
-		t.Errorf("creating toggle threw error: %v", err)
-	}
+		if stringToggle.DefaultValue("ERROR") != "real" {
+			t.Errorf("string toggle value was not 'real' but '%s'", stringToggle.Value())
+		}
+	})
 
-	stringToggle, ok = toggle.(StringToggle)
+	t.Run("Test set object toggle", func(t *testing.T) {
+		data := make(map[string]interface{})
+		data["value"] = "test"
 
-	if !ok {
-		t.Error("toggle was not of string kind")
-	}
+		toggle, err := SetToggle("string", KindObject, data)
 
-	if !stringToggle.Equals("real") {
-		t.Errorf("toggle value was not 'real' but '%s'", stringToggle.Value())
-	}
+		if err != nil {
+			t.Errorf("creating toggle threw error: %v", err)
+		}
 
-	stringToggle = GetStringToggle("string")
+		objectToggle, ok := toggle.(ObjectToggle)
 
-	if stringToggle.DefaultValue("ERROR") != "real" {
-		t.Errorf("string toggle value was not 'real' but '%s'", stringToggle.Value())
-	}
-}
+		if !ok {
+			t.Error("toggle was not of string kind")
+		}
 
-func TestSetObjectToggle(t *testing.T) {
-	data := make(map[string]interface{})
-	data["value"] = "test"
+		if objectToggle.DefaultString("value", "ERROR") != "test" {
+			t.Errorf("toggle value was not 'test' but '%s'", objectToggle.Value())
+		}
 
-	toggle, err := SetToggle("string", KindObject, data)
+		objectToggle = GetObjectToggle("string")
 
-	if err != nil {
-		t.Errorf("creating toggle threw error: %v", err)
-	}
+		if objectToggle.DefaultString("value", "ERROR") != "test" {
+			t.Errorf("string toggle value was not 'test' but '%s'", objectToggle.Value())
+		}
 
-	objectToggle, ok := toggle.(ObjectToggle)
+		data["value"] = "real"
+		toggle, err = SetToggle("string", KindObject, data)
 
-	if !ok {
-		t.Error("toggle was not of string kind")
-	}
+		if err != nil {
+			t.Errorf("creating toggle threw error: %v", err)
+		}
 
-	if objectToggle.DefaultString("value", "ERROR") != "test" {
-		t.Errorf("toggle value was not 'test' but '%s'", objectToggle.Value())
-	}
+		objectToggle, ok = toggle.(ObjectToggle)
 
-	objectToggle = GetObjectToggle("string")
+		if !ok {
+			t.Error("toggle was not of string kind")
+		}
 
-	if objectToggle.DefaultString("value", "ERROR") != "test" {
-		t.Errorf("string toggle value was not 'test' but '%s'", objectToggle.Value())
-	}
+		if objectToggle.DefaultString("value", "ERROR") != "real" {
+			t.Errorf("toggle value was not 'real' but '%s'", objectToggle.Value())
+		}
 
-	data["value"] = "real"
-	toggle, err = SetToggle("string", KindObject, data)
+		objectToggle = GetObjectToggle("string")
 
-	if err != nil {
-		t.Errorf("creating toggle threw error: %v", err)
-	}
+		if objectToggle.DefaultString("value", "ERROR") != "real" {
+			t.Errorf("string toggle value was not 'real' but '%s'", objectToggle.Value())
+		}
+	})
 
-	objectToggle, ok = toggle.(ObjectToggle)
+	t.Run("Test remove toggle", func(t *testing.T) {
+		SetStringToggle("value", "good")
 
-	if !ok {
-		t.Error("toggle was not of string kind")
-	}
+		subject := GetStringToggle("value")
 
-	if objectToggle.DefaultString("value", "ERROR") != "real" {
-		t.Errorf("toggle value was not 'real' but '%s'", objectToggle.Value())
-	}
+		if subject.Value() != "good" {
+			t.Errorf("toggle value was not 'good' but '%s'", subject.Value())
+		}
 
-	objectToggle = GetObjectToggle("string")
+		RemoveToggle("value", KindString)
 
-	if objectToggle.DefaultString("value", "ERROR") != "real" {
-		t.Errorf("string toggle value was not 'real' but '%s'", objectToggle.Value())
-	}
-}
+		subject = GetStringToggle("value")
 
-func TestRemoveToggle(t *testing.T) {
-	SetStringToggle("value", "good")
+		if subject.DefaultValue("removed") != "removed" {
+			t.Errorf("toggle value was not 'removed' but '%s'", subject.Value())
+		}
+	})
 
-	subject := GetStringToggle("value")
+	t.Run("Test subscribe", func(t *testing.T) {
+		subject := SetStringToggle("value", "good")
+		feedback := make(chan string, 1)
 
-	if subject.Value() != "good" {
-		t.Errorf("toggle value was not 'good' but '%s'", subject.Value())
-	}
+		Subscribe(func(ut *UpdatedToggle) {
+			if ut.Kind != KindString && ut.Name != "value" {
+				return
+			}
 
-	RemoveToggle("value", KindString)
+			feedback <- ut.Value.(string)
+		})
 
-	subject = GetStringToggle("value")
+		subject.Set("bad")
 
-	if subject.DefaultValue("removed") != "removed" {
-		t.Errorf("toggle value was not 'removed' but '%s'", subject.Value())
-	}
+		<-feedback // good
+		result := <-feedback
+
+		if result != "bad" {
+			t.Errorf("value was not bad but %s", result)
+		}
+
+	})
 }
