@@ -35,7 +35,7 @@ func init() {
 	}()
 }
 
-func Subscribe(handler func(*UpdatedToggle)) {
+func Subscribe(handler Subscriber) {
 	subscribers = append(subscribers, handler)
 }
 
